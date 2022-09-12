@@ -21,12 +21,12 @@ const database = require("./database");
   };
 //express 3
   const postUsers = (req, res) => {
-    const { firstname, lastname, email, city, language } = req.body;
+    const { firstname, lastname, email, city, language, hashPassword } = req.body;
   
     database
       .query(
-        "INSERT INTO users(firstname, lastname, email, city, language) VALUES (?, ?, ?, ?, ?)",
-        [firstname, lastname, email, city, language]
+        "INSERT INTO users(firstname, lastname, email, city, language, hashPassword) VALUES (?, ?, ?, ?, ?, ?)",
+        [firstname, lastname, email, city, language, hashPassword]
       
       )
       .then(([result]) => {

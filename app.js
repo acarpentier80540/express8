@@ -13,6 +13,9 @@ const welcome = (req, res) => {
 //import fichier
 const movieHandlers = require("./movieHandlers");
 const usersHandlers = require("./usersHandlers");
+const { hashPassword } = require("./auth.js");
+
+app.post("/api/users", hashPassword, usersHandlers.postUser);
 
 
 app.get("/", welcome);
