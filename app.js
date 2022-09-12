@@ -13,28 +13,42 @@ const welcome = (req, res) => {
 //import fichier
 const movieHandlers = require("./movieHandlers");
 const usersHandlers = require("./usersHandlers");
-const { hashPassword } = require("./auth.js");
-
-app.post("/api/users", hashPassword, usersHandlers.postUser);
-
 
 app.get("/", welcome);
+const { hashPassword, verifyPassword, verifyToken } = require("./auth.js");
+
+//public
+app.post(
+  "/api/login",
+  usersHandlers.getUserByEmailWithPasswordAndPassToNext,
+  verifyPassword
+);
 app.get("/api/movies", movieHandlers.getMovies);
 app.get("/api/movies/:id", movieHandlers.getMovieById);
-//express 2
+
 app.get("/api/users", usersHandlers.getUsers);
 app.get("/api/users/:id", usersHandlers.getUsersById);
-//express 3
-app.post("/api/movies", movieHandlers.postMovie);
-app.post("/api/users", usersHandlers.postUsers);
-//express 4
-app.put("/api/movies/:id", movieHandlers.updateMovie);
+
+app.post("/api/users", hashPassword, usersHandlers.postUsers);
+
+//protected
+app.use(verifyToken)
+
+app.post("/api/movies", verifyToken, verifyToken, movieHandlers.postMovie);
+app.put("/api/movies/:id", verifyToken, movieHandlers.updateMovie);
+app.delete("/api/movies/:id", verifyToken, movieHandlers.deleteMovie);
 app.put("/api/users/:id", usersHandlers.updateUsers);
-//express 5
-app.delete("/api/movies/:id", movieHandlers.deleteMovie);
-app.delete("/api/users", usersHandlers.deleteUsers);
+app.delete("/api/users/:id", usersHandlers.deleteUsers);
 
+// const isItDwight = (req, res) => {
+//   if (req.body.email === "dwight@theoffice.com" && req.body.password === "123456") {
+//     res.send("Credentials are valid");
+//   } else {
+//     res.sendStatus(401);
+//   }
+// };
 
+// app.post("/api/login", isItDwight);
 
 app.listen(port, (err) => {
   if (err) {
